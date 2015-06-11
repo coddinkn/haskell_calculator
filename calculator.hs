@@ -4,6 +4,10 @@ import Data.List
 import Data.Char
 import Data.Maybe
 
+fac :: Int -> Int
+fac 0 = 1
+fac n = n * fac (n - 1)
+
 removeSpaces :: String -> String
 removeSpaces = filter (/= ' ')
 
@@ -40,6 +44,12 @@ stringToInt str = read str :: Int
 computeList :: [String] -> String
 computeList (x:op:y:[])
 	| op == "+" = show ((stringToInt x) + (stringToInt y))
+	| op == "-" = show ((stringToInt x) - (stringToInt y))
+	| op == "*" = show ((stringToInt x) * (stringToInt y))
+computeList (op:x:[])
+	| x == "!" = show (fac (stringToInt op))
+	| op == "-" = show ((stringToInt x) * (-1))
+
 
 replacePerends :: String -> String -> String
 replacePerends str x = if isNothing i
@@ -55,4 +65,9 @@ replacePerends' str x n = if (str!!n) /= '('
 calculate :: String -> String
 calculate exp = if numPerends exp /= 0
 	then calculate (replacePerends (removeSpaces exp) (computeList (breakPerends (firstPerends (removeSpaces exp)))))
-	else exp	
+	else exp
+
+main = do
+	expression <- getLine
+	putStrLn (calculate expression)	
+	main
