@@ -37,25 +37,39 @@ getFirstPerends' str n list = if (str!!n) /= '('
 								then getFirstPerends' str (n - 1) ((str!!n):list)
 								else ('(':list)
 
-calcPerends :: String -> Int
-calcPerends (p:x:op:y:q)
-	| op == '+' = ((digitToInt x) + (digitToInt y))
-    | op == '-'	= ((digitToInt x) - (digitToInt y))
-	| op == '*' = ((digitToInt x) * (digitToInt y))
-calcPerends (p:x:op:q)
-	| op == '!' = (fac (digitToInt x))
-	| x == '-' = ((digitToInt op) * (-1))
+getNumbers :: String -> [String]
+getNumbers str = [getFirstNumber str, getSecondNumber str]
 
-replacePerends :: String -> Int -> String
+getFirstNumber :: String -> String
+getFirstNumber str = getFirstNumber' str [] 1
+
+getFirstNumber' :: String -> String -> Int -> String
+getFirstNumber' str new n = if isDigit (str!!n)
+					then getFirstNumber' str (new ++ [str!!n]) (n + 1)
+					else new  
+
+getSecondNumber :: String -> String
+getSecondNumber str = getSecondNumber' str [] n
+				where n = ((fromJust (elemIndex ')' str)) - 1) 
+
+getSecondNumber' :: String -> String -> Int -> String
+getSecondNumber' str new n = if isDigit (str!!n)
+					then getSecondNumber' str ((str!!n):new) (n - 1)
+					else new
+
+calcPerends :: String -> String
+calcPerends str = 'a':str
+
+replacePerends :: String -> String -> String
 replacePerends str x = if isNothing n
 					then error "no bracket enclosed expression present"
 					else filter (/= 'X') (replacePerends' str x (fromJust n))
 				where n = elemIndex ')' str  
 
-replacePerends' :: String -> Int -> Int -> String
+replacePerends' :: String -> String -> Int -> String
 replacePerends' str x n = if (str!!n) /= '('
 						then replacePerends' (take n str ++ ['X'] ++ drop (n + 1) str) x (n - 1)
-						else (take n str ++ [(intToDigit x)] ++ drop (n + 1) str)
+						else (take n str ++ x ++ drop (n + 1) str)
 
 calculate :: String -> String
 calculate str = if countPerends str /= 0
