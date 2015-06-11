@@ -2,6 +2,7 @@
 
 import Data.List
 import Data.Maybe
+import Data.Char
 
 fac :: Float -> Float
 fac 0.0 = 1.0
@@ -37,4 +38,9 @@ getFirstPerends' str n list = if (str!!n) /= '('
 									then getFirstPerends' str (n - 1) ((str!!n):list)
 									else ('(':list)
 
- 
+calcPerends :: String -> Int
+calcPerends (p:x:op:y:q)
+	| op == '+' = ((digitToInt x) + (digitToInt y))
+    | op == '-'	= ((digitToInt x) - (digitToInt y))
+	| op == '*' = ((digitToInt x) * (digitToInt y))
+	| otherwise = 0
