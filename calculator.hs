@@ -1,4 +1,4 @@
--- this code is currently learn you a haskell's rpn calculator
+-- infix calculator
 
 import Data.List
 import Data.Maybe
@@ -7,19 +7,6 @@ import Data.Char
 fac :: Int -> Int
 fac 0 = 1
 fac x = x * fac (x - 1)
-
-computeRPN :: String -> Float
-computeRPN = head . foldl foldingFunction [] . words
-	where   foldingFunction (x:y:ys) "*" = (x * y):ys
-		foldingFunction (x:y:ys) "+" = (x + y):ys
-		foldingFunction (x:y:ys) "-" = (y - x):ys
-		foldingFunction (x:y:ys) "/" = (y / x):ys
-		foldingFunction (x:y:ys) "^" = (y ** x):ys
-		foldingFunction (x:xs) "ln" = log x:xs
-		foldingFunction xs "sum" = [sum xs]
-		foldingFunction xs numberString = read numberString:xs
-
--- my attempt at an infix calculator starts here
 
 isPerend :: Char -> Bool
 isPerend c = c == '(' || c == ')'
@@ -37,8 +24,14 @@ getFirstPerends' str n list = if (str!!n) /= '('
 								then getFirstPerends' str (n - 1) ((str!!n):list)
 								else ('(':list)
 
+computeNewNumber :: [String] -> String
+computeNewNumber (x:op:y:ys) = show ((read x :: Int) + (read y :: Int)) 
+
 getNumbers :: String -> [String]
-getNumbers str = [getFirstNumber str, getSecondNumber str]
+getNumbers str = [getFirstNumber str, getOperator str, getSecondNumber str]
+
+getOperator :: String -> String
+getOperator str = filter (\x -> (x /= '(') && (x /= ')') && not (isDigit x)) str
 
 getFirstNumber :: String -> String
 getFirstNumber str = getFirstNumber' str [] 1
